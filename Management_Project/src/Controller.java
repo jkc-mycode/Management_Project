@@ -2,52 +2,32 @@ import java.util.*;
 
 class Controller {
 	protected static int E_count=-1, L_count=-1, F_count=-1; //제품 객체 배열의 인덱스 번호 초기화
-	protected static Management_Elec [] E_product = new Management_Elec[10]; //전자제품 객체 배열 생성
-	protected static Management_Life [] L_product = new Management_Life[10]; //생활용품 객체 배열 생성
-	protected static Management_Food [] F_product = new Management_Food[10]; //식품 객체 배열 생성
+	//protected static Management_Elec [] E_product = new Management_Elec[10]; //전자제품 객체 배열 생성
+	protected static Vector<Management_Elec> E_product_Vector = new Vector<Management_Elec>(); //전자제품 객체 벡터로 생성
+	//protected static Management_Life [] L_product = new Management_Life[10]; //생활용품 객체 배열 생성
+	protected static Vector<Management_Life> L_product_Vector = new Vector<Management_Life>(); //생활용품 객체 벡터로 생성
+	//protected static Management_Food [] F_product = new Management_Food[10]; //식품 객체 배열 생성
+	protected static Vector<Management_Food> F_product_Vector = new Vector<Management_Food>(); //식품 객체 벡터로 생성
 	
-	public int Full_E() {
-		if(E_count>=E_product.length-1) {
-			return 1;
-		}
-		return 0;
-	}
-	public int Empty_E() { //제품의 배열이 비었는지 확인
-		for(int i=0;i<=E_count;i++) {
-			if(!E_product[i].Product_Num.equals("none")) {
-				return 0;
-			}
+	public int Empty_E() { //제품의 벡터가 비었는지 확인
+		if(E_product_Vector.size() == 0) {
+			return 0;
 		}
 		return 1;
 	}
-	public int Full_L() {
-		if(L_count>=L_product.length-1) {
-			return 1;
-		}
-		return 0;
-	}
-	public int Empty_L() { //제품의 배열이 비었는지 확인
-		for(int i=0;i<=L_count;i++) {
-			if(!L_product[i].Product_Num.equals("none")) {
-				return 0;
-			}
+	public int Empty_L() { //제품의 벡터가 비었는지 확인
+		if(L_product_Vector.size() == 0) {
+			return 0;
 		}
 		return 1;
 	}
-	public int Full_F() {
-		if(F_count>=F_product.length-1) {
-			return 1;
-		}
-		return 0;
-	}
-	public int Empty_F() { //제품의 배열이 비었는지 확인
-		for(int i=0;i<=F_count;i++) {
-			if(!F_product[i].Product_Num.equals("none")) {
-				return 0;
-			}
+	public int Empty_F() { //제품의 벡터가 비었는지 확인
+		if(F_product_Vector.size() == 0) {
+			return 0;
 		}
 		return 1;
 	}
+	
 	public int print_menu() { //하부 메뉴 출력
 		Scanner sc1 = new Scanner(System.in);
 		System.out.print("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n");
@@ -67,11 +47,7 @@ class Controller {
 		Scanner sc2 = new Scanner(System.in);
 		select = print_menu();
 		if(select == 4) { return; }
-		
-		if(Full_E()==1) {
-			System.out.println("공간이 가득 찼음!!");
-			return;
-		}
+
 		System.out.print("제품번호 : ");
 		num = sc2.nextLine();
 		System.out.print("제품명 : ");
@@ -89,8 +65,10 @@ class Controller {
 			System.out.print("에너지등급 : ");
 			grade = sc2.nextInt();
 			
-			E_product[++E_count] = new Management_Elec(num, name, price, amount, maker, guarantee, grade);
-			E_product[E_count].Info_print();
+			Management_Elec e_pro = new Management_Elec(num, name, price, amount, maker, guarantee, grade);
+			E_product_Vector.addElement(e_pro);
+			int n = E_product_Vector.lastIndexOf(e_pro);
+			E_product_Vector.get(n).Info_print();
 		}else if(select == 2) {
 			sc2.nextLine();
 			System.out.print("제조사 : ");
@@ -98,8 +76,10 @@ class Controller {
 			System.out.print("용도 : ");
 			usage = sc2.nextLine();
 			
-			L_product[++L_count] = new Management_Life(num, name, price, amount, maker, usage);
-			L_product[L_count].Info_print();
+			Management_Life l_pro = new Management_Life(num, name, price, amount, maker, usage);
+			L_product_Vector.addElement(l_pro);
+			int n = L_product_Vector.lastIndexOf(l_pro);
+			L_product_Vector.get(n).Info_print();
 		}else if(select == 3){
 			sc2.nextLine();
 			System.out.print("제조사 : ");
@@ -109,8 +89,11 @@ class Controller {
 			System.out.print("종류 : ");
 			f_kind = sc2.nextLine();
 			
-			F_product[++F_count] = new Management_Food(num, name, price, amount, maker, f_day, f_kind);
-			F_product[F_count].Info_print();
+			Management_Food f_pro = new Management_Food(num, name, price, amount, maker, f_day, f_kind);
+			F_product_Vector.addElement(f_pro);
+			int n = L_product_Vector.lastIndexOf(f_pro);
+			F_product_Vector.get(n).Info_print();
+			
 		}else {
 			System.out.println("잘못된 입력값!!");
 			return;
@@ -127,42 +110,51 @@ class Controller {
 		d_num = sc.nextLine();
 		
 		if(select == 1) {
-			if(Empty_E() == 1) {
+			//Iterator를 활용한 전자제품 객체 삭제문
+			Iterator<Management_Elec> it = E_product_Vector.iterator();
+			if(!it.hasNext()) {
 				System.out.println("삭제할 데이터가 없음!!");
 				return;
 			}
-			for(int i=0;i<=E_count;i++) { //입력한 제품번호를 찾는 반복문
-				if(E_product[i].Product_Num.equals(d_num)) {
+			while(it.hasNext()) {
+				Management_Elec e_pro = it.next();
+				if(e_pro.Product_Num.equals(d_num)) {
 					System.out.println("제품번호 "+d_num+"를(을) 삭제합니다!!");
-					E_product[i] = new Management_Elec();
+					it.remove();
 					return;
 				}
 			}
 			System.out.println("찾는 정보가 없음!!");
 			return;
 		}else if(select == 2) {
-			if(Empty_L() == 1) {
+			//Iterator를 활용한 생활용품 객체 삭제문
+			Iterator<Management_Life> it = L_product_Vector.iterator();
+			if(!it.hasNext()) {
 				System.out.println("삭제할 데이터가 없음!!");
 				return;
 			}
-			for(int i=0;i<=L_count;i++) {
-				if(L_product[i].Product_Num.equals(d_num)) {
+			while(it.hasNext()) {
+				Management_Life l_pro = it.next();
+				if(l_pro.Product_Num.equals(d_num)) {
 					System.out.println("제품번호 "+d_num+"를(을) 삭제합니다!!");
-					L_product[i] = new Management_Life();
+					it.remove();
 					return;
 				}
 			}
 			System.out.println("찾는 정보가 없음!!");
 			return;
 		}else if(select == 3) {
-			if(Empty_F() == 1) {
+			//Iterator를 활용한 식품 객체 삭제문
+			Iterator<Management_Food> it = F_product_Vector.iterator();
+			if(!it.hasNext()) {
 				System.out.println("삭제할 데이터가 없음!!");
 				return;
 			}
-			for(int i=0;i<=F_count;i++) {
-				if(F_product[i].Product_Num.equals(d_num)) {
+			while(it.hasNext()) {
+				Management_Food f_pro = it.next();
+				if(f_pro.Product_Num.equals(d_num)) {
 					System.out.println("제품번호 "+d_num+"를(을) 삭제합니다!!");
-					F_product[i] = new Management_Food();
+					it.remove();
 					return;
 				}
 			}
@@ -176,7 +168,8 @@ class Controller {
 		}
 	}
 	public void ProductRevise() { //제품수정 메서드
-		//어느걸 수정할지 메뉴 선택(스위치문 or if문) -> 제품번호입력 -> 다시입력(수정) ->수정완료
+		//어느걸 수정할지 메뉴 선택(스위치문 or if문) -> 제품번호입력 -> 다시입력(수정) ->수정완료\
+		//벡터와 Iterator를 활용
 		int select;
 		String r_num;
 		Scanner sc = new Scanner(System.in);
@@ -184,77 +177,83 @@ class Controller {
 		System.out.print("수정할 제품번호 : ");
 		r_num = sc.nextLine();
 		if(select==1) {
-			if(Empty_E()==1) {
+			Iterator<Management_Elec> it = E_product_Vector.iterator();
+			if(!it.hasNext()) {
 				System.out.println("데이터가 비어있음!!");
 				return;
 			}
-			for(int i=0;i<=E_count;i++) {
-				if(E_product[i].Product_Num.equals(r_num)) {
+			while(it.hasNext()) {
+				Management_Elec e_pro = it.next();
+				if(e_pro.Product_Num.equals(r_num)) {
 					System.out.print("제품번호 : ");
-					E_product[i].Product_Num=sc.nextLine();
+					e_pro.Product_Num=sc.nextLine();
 					System.out.print("제품명 : ");
-					E_product[i].Product_Name = sc.nextLine();
+					e_pro.Product_Name = sc.nextLine();
 					System.out.print("가격 : ");
-					E_product[i].Product_Price = sc.nextInt();
+					e_pro.Product_Price = sc.nextInt();
 					System.out.print("수량 : ");
-					E_product[i].Product_Amount = sc.nextInt();
+					e_pro.Product_Amount = sc.nextInt();
 					sc.nextLine();
 					System.out.print("제조사 : ");
-					E_product[i].Maker = sc.nextLine();
+					e_pro.Maker = sc.nextLine();
 					System.out.print("품질보증기간(일) : ");
-					E_product[i].Guarantee = sc.nextInt();
+					e_pro.Guarantee = sc.nextInt();
 					System.out.print("에너지등급 : ");
-					E_product[i].Grade = sc.nextInt();
+					e_pro.Grade = sc.nextInt();
 					return;
 				}
 			}
 			System.out.println("찾는 정보가 없음!!");
 			return;
 		}else if(select==2) {
-			if(Empty_L()==1) {
+			Iterator<Management_Life> it = L_product_Vector.iterator();
+			if(!it.hasNext()) {
 				System.out.println("데이터가 비어있음!!");
 				return;
 			}
-			for(int i=0;i<=L_count;i++) {
-				if(L_product[i].Product_Num.equals(r_num)) {
+			while(it.hasNext()) {
+				Management_Life l_pro = it.next();
+				if(l_pro.Product_Num.equals(r_num)) {
 					System.out.print("제품번호 : ");
-					L_product[i].Product_Num=sc.nextLine();
+					l_pro.Product_Num=sc.nextLine();
 					System.out.print("제품명 : ");
-					L_product[i].Product_Name = sc.nextLine();
+					l_pro.Product_Name = sc.nextLine();
 					System.out.print("가격 : ");
-					L_product[i].Product_Price = sc.nextInt();
+					l_pro.Product_Price = sc.nextInt();
 					System.out.print("수량 : ");
 					sc.nextLine();
 					System.out.print("제조사 : ");
-					L_product[i].Maker = sc.nextLine();
+					l_pro.Maker = sc.nextLine();
 					System.out.print("용도 : ");
-					L_product[i].Usage = sc.nextLine();
+					l_pro.Usage = sc.nextLine();
 					return;
 				}
 			}
 			System.out.println("찾는 정보가 없음!!");
 			return;
 		}else if(select==3) {
-			if(Empty_F()==1) {
+			Iterator<Management_Food> it = F_product_Vector.iterator();
+			if(!it.hasNext()) {
 				System.out.println("데이터가 비어있음!!");
 				return;
 			}
-			for(int i=0;i<=F_count;i++) {
-				if(F_product[i].Product_Num.equals(r_num)) {
+			while(it.hasNext()) {
+				Management_Food f_pro = it.next();
+				if(f_pro.Product_Num.equals(r_num)) {
 					System.out.print("제품번호 : ");
-					F_product[i].Product_Num=sc.nextLine();
+					f_pro.Product_Num=sc.nextLine();
 					System.out.print("제품명 : ");
-					F_product[i].Product_Name = sc.nextLine();
+					f_pro.Product_Name = sc.nextLine();
 					System.out.print("가격 : ");
-					F_product[i].Product_Price = sc.nextInt();
+					f_pro.Product_Price = sc.nextInt();
 					System.out.print("수량 : ");
 					sc.nextLine();
 					System.out.print("제조사 : ");
-					F_product[i].Made = sc.nextLine();
+					f_pro.Made = sc.nextLine();
 					System.out.print("유통기한 : ");
-					F_product[i].F_Day = sc.nextLine();
+					f_pro.F_Day = sc.nextLine();
 					System.out.print("종류 : ");
-					F_product[i].F_Kind = sc.nextLine();
+					f_pro.F_Kind = sc.nextLine();
 					return;
 				}
 			}
@@ -267,44 +266,69 @@ class Controller {
 			return;
 		}
 	}
-	public Product ProductSearch() { //제품검색 메서드
+	public Vector<Product> ProductSearch() { //제품검색 메서드
 		//어느걸 찾을지 메뉴 선택(스위치문 or if문) -> 제품번호입력 -> index이용해서 반복문 -> 검색완료
 		//전체 출력도 메뉴에 넣기
-		int select;
+		int select, check=0;
 		String s_num;
 		Scanner sc = new Scanner(System.in);
 		select=print_menu();
-		System.out.print("검색할 제품번호 : ");
+		System.out.print("검색할 제품명 : ");
 		s_num = sc.nextLine();
 		System.out.println("===========출력결과==========");
 		
 		if(select==1) {
-			for(int i=0;i<=E_count;i++) {
-				if(E_product[i].Product_Num.equals(s_num)) {
-					E_product[i].Info_print();
-					return E_product[i];
+			//중복된 이름을 가진 제품이 있을 수 있기에 벡터에 저장해서 리턴하기 위해
+			Vector<Product> temp = new Vector<Product>(); 
+			Iterator<Management_Elec> it = E_product_Vector.iterator();
+			while(it.hasNext()) {
+				Management_Elec e_pro = it.next();
+				if(e_pro.Product_Name.equals(s_num)) {
+					check = 1; //검색에서 제품의 유무를 저장하는 변수
+					e_pro.Info_print();
+					temp.addElement(e_pro);
 				}
 			}
-			System.out.println("검색결과 없음!!");
-			return null;
+			if(check == 1) {
+				return temp;
+			}else {
+				System.out.println("검색결과 없음!!");
+				return null;
+			}
 		}else if(select==2) {
-			for(int i=0;i<=L_count;i++) {
-				if(L_product[i].Product_Num.equals(s_num)) {
-					L_product[i].Info_print();
-					return L_product[i];
+			Vector<Product> temp = new Vector<Product>(); 
+			Iterator<Management_Life> it = L_product_Vector.iterator();
+			while(it.hasNext()) {
+				Management_Life l_pro = it.next();
+				if(l_pro.Product_Name.equals(s_num)) {
+					check = 1; //검색에서 제품의 유무를 저장하는 변수
+					l_pro.Info_print();
+					temp.addElement(l_pro);
 				}
 			}
-			System.out.println("검색결과 없음!!");
-			return null;
+			if(check == 1) {
+				return temp;
+			}else {
+				System.out.println("검색결과 없음!!");
+				return null;
+			}
 		}else if(select==3) {
-			for(int i=0;i<=F_count;i++) {
-				if(F_product[i].Product_Num.equals(s_num)) {
-					F_product[i].Info_print();
-					return F_product[i];
+			Vector<Product> temp = new Vector<Product>(); 
+			Iterator<Management_Food> it = F_product_Vector.iterator();
+			while(it.hasNext()) {
+				Management_Food f_pro = it.next();
+				if(f_pro.Product_Name.equals(s_num)) {
+					check = 1; //검색에서 제품의 유무를 저장하는 변수
+					f_pro.Info_print();
+					temp.addElement(f_pro);
 				}
 			}
-			System.out.println("검색결과 없음!!");
-			return null;
+			if(check == 1) {
+				return temp;
+			}else {
+				System.out.println("검색결과 없음!!");
+				return null;
+			}
 		}else if(select==4) {
 			return null;
 		}else {
@@ -317,28 +341,34 @@ class Controller {
 		Scanner sc = new Scanner(System.in);
 		select=print_menu();
 		if(select==1) {
-			if(Empty_E() == 1) {
+			Iterator<Management_Elec> it = E_product_Vector.iterator();
+			if(!it.hasNext()) {
 				System.out.println("출력할 데이터가 없음!!");
 				return;
 			}
-			for(int i=0;i<=E_count;i++) {
-				E_product[i].Info_print();
+			while(it.hasNext()) {
+				Management_Elec e_pro = it.next();
+				e_pro.Info_print();
 			}
 		}else if(select==2) {
-			if(Empty_L() == 1) {
+			Iterator<Management_Life> it = L_product_Vector.iterator();
+			if(!it.hasNext()) {
 				System.out.println("출력할 데이터가 없음!!");
 				return;
 			}
-			for(int i=0;i<=L_count;i++) {
-				L_product[i].Info_print();
+			while(it.hasNext()) {
+				Management_Life l_pro = it.next();
+				l_pro.Info_print();
 			}
 		}else if(select==3) {
-			if(Empty_F() == 1) {
+			Iterator<Management_Food> it = F_product_Vector.iterator();
+			if(!it.hasNext()) {
 				System.out.println("출력할 데이터가 없음!!");
 				return;
 			}
-			for(int i=0;i<=F_count;i++) {
-				F_product[i].Info_print();
+			while(it.hasNext()) {
+				Management_Food f_pro = it.next();
+				f_pro.Info_print();
 			}
 		}else if(select==4) {
 			return;
