@@ -1,12 +1,8 @@
 import java.util.*;
 
 class Controller {
-	protected static int E_count=-1, L_count=-1, F_count=-1; //제품 객체 배열의 인덱스 번호 초기화
-	//protected static Management_Elec [] E_product = new Management_Elec[10]; //전자제품 객체 배열 생성
 	protected static Vector<Management_Elec> E_product_Vector = new Vector<Management_Elec>(); //전자제품 객체 벡터로 생성
-	//protected static Management_Life [] L_product = new Management_Life[10]; //생활용품 객체 배열 생성
 	protected static Vector<Management_Life> L_product_Vector = new Vector<Management_Life>(); //생활용품 객체 벡터로 생성
-	//protected static Management_Food [] F_product = new Management_Food[10]; //식품 객체 배열 생성
 	protected static Vector<Management_Food> F_product_Vector = new Vector<Management_Food>(); //식품 객체 벡터로 생성
 	
 	public int Empty_E() { //제품의 벡터가 비었는지 확인

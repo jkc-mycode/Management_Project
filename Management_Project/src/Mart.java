@@ -8,7 +8,6 @@ interface Shopping{
 
 public class Mart {
 	protected Controller con = new Controller(); //컨트롤러에 있는 메서드 활용을 위해 사용
-	protected Product [] cart_info = new Product[10]; //장바구니 배열 생성
 	protected Vector<Product> cart_info_Vector = new Vector<Product>(); //장바구니 벡터 생성
 	protected int cart_index = 0;
 	
@@ -41,10 +40,10 @@ public class Mart {
 
 	public void Search() { //고객용 물품 검색 메서드(이름으로)
 		Vector<Product> p_search_result = con.ProductSearch(); //제품을 검색해서 제품 정보 가져오기
-		Product product_select;
 		Scanner sc = new Scanner(System.in);
-		String select1;
-		int select2, check=0;
+		String select1; //중복된 물품이 있을 경우 제품번호로 선택하기 위한 변수
+		int select2, check=0; 
+		//구매할지 장바구니에 담을지 선택하기 위한 변수, select1에서 입력한 내용의 유무확인을 위한 변수
 		
 		System.out.print("제품번호로 선택 : ");
 		select1 = sc.next();
