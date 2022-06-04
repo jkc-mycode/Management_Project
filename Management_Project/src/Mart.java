@@ -40,7 +40,7 @@ public class Mart {
 	}
 
 	public void Search() { //고객용 물품 검색 메서드(이름으로)
-		Vector<Product> p_search_result = con.ProductSearch(); //업캐스팅, 제품을 검색해서 제품 정보 가져오기
+		Vector<Product> p_search_result = con.ProductSearch(); //제품을 검색해서 제품 정보 가져오기
 		Product product_select;
 		Scanner sc = new Scanner(System.in);
 		String select1;
