@@ -1,10 +1,12 @@
 import java.util.*;
+import java.io.*;
 
-public class Management {
-	public void Management_main() {
+public class Management implements Serializable {
+	public void Management_main() throws IOException, ClassNotFoundException, FileNotFoundException, EOFException {
 		int select;
 		Scanner sc = new Scanner(System.in);
 		Controller con = new Controller();
+		con.init();
 		
 		while(true) {
 			System.out.print("�ѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤѤ�\n");

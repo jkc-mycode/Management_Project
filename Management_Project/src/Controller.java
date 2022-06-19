@@ -1,29 +1,58 @@
 import java.util.*;
+import java.io.*;
 
-class Controller {
+class Controller implements Serializable {
 	protected static Vector<Management_Elec> E_product_Vector = new Vector<Management_Elec>(); //전자제품 객체 벡터로 생성
 	protected static Vector<Management_Life> L_product_Vector = new Vector<Management_Life>(); //생활용품 객체 벡터로 생성
 	protected static Vector<Management_Food> F_product_Vector = new Vector<Management_Food>(); //식품 객체 벡터로 생성
 	
-	public int Empty_E() { //제품의 벡터가 비었는지 확인
-		if(E_product_Vector.size() == 0) {
-			return 0;
+	public void init() throws EOFException, FileNotFoundException, IOException, ClassNotFoundException {
+		File f = new File("Elec_Product.bin");
+		if(f.isFile()) {
+			FileInputStream fin = new FileInputStream("Elec_Product.bin");
+			if(f.length() != 0) {
+				ObjectInputStream in = new ObjectInputStream(fin);
+				E_product_Vector = (Vector<Management_Elec>)in.readObject();
+				in.close();
+			}
 		}
-		return 1;
-	}
-	public int Empty_L() { //제품의 벡터가 비었는지 확인
-		if(L_product_Vector.size() == 0) {
-			return 0;
+		
+		File f1 = new File("Life_Product.bin");
+		if(f1.isFile()) {
+			FileInputStream fin = new FileInputStream("Life_Product.bin");
+			if(f1.length() != 0) {
+				ObjectInputStream in = new ObjectInputStream(fin);
+				L_product_Vector = (Vector<Management_Life>)in.readObject();
+				in.close();
+			}
 		}
-		return 1;
-	}
-	public int Empty_F() { //제품의 벡터가 비었는지 확인
-		if(F_product_Vector.size() == 0) {
-			return 0;
+		
+		File f2 = new File("Food_Product.bin");
+		if(f2.isFile()) {
+			FileInputStream fin = new FileInputStream("Food_Product.bin");
+			if(f2.length() != 0) {
+				ObjectInputStream in = new ObjectInputStream(fin);
+				F_product_Vector = (Vector<Management_Food>)in.readObject();
+				in.close();
+			}
 		}
-		return 1;
 	}
-	
+	public void save() throws EOFException, FileNotFoundException, IOException, ClassNotFoundException {
+		FileOutputStream fout = new FileOutputStream("Elec_Product.bin");
+		ObjectOutputStream out = new ObjectOutputStream(fout);
+		out.writeObject(E_product_Vector);
+		out.close();
+		
+		FileOutputStream fout1 = new FileOutputStream("Life_Product.bin");
+		ObjectOutputStream out1 = new ObjectOutputStream(fout1);
+		out1.writeObject(L_product_Vector);
+		out1.close();
+		
+		FileOutputStream fout2 = new FileOutputStream("Food_Product.bin");
+		ObjectOutputStream out2 = new ObjectOutputStream(fout2);
+		out2.writeObject(F_product_Vector);
+		out2.close();
+	}
 	public int print_menu() { //하부 메뉴 출력
 		Scanner sc1 = new Scanner(System.in);
 		System.out.print("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ\n");
@@ -33,8 +62,7 @@ class Controller {
 		int select = sc1.nextInt();
 		return select;
 	}
-	
-	public void ProductRegister() { //제품등록 메서드
+	public void ProductRegister() throws EOFException, FileNotFoundException, IOException, ClassNotFoundException { //제품등록 메서드
 		String num, name, maker, usage, f_day, f_kind; //제품번호, 제품명, 제조사, 용도, 유통기한, 종류
 		int price, amount, guarantee, grade; //수량, 품질보증기간, 에너지등급
 		int select;
@@ -63,6 +91,9 @@ class Controller {
 			
 			Management_Elec e_pro = new Management_Elec(num, name, price, amount, maker, guarantee, grade);
 			E_product_Vector.addElement(e_pro);
+			
+			save();
+			
 			int n = E_product_Vector.lastIndexOf(e_pro);
 			E_product_Vector.get(n).Info_print();
 		}else if(select == 2) {
@@ -74,6 +105,9 @@ class Controller {
 			
 			Management_Life l_pro = new Management_Life(num, name, price, amount, maker, usage);
 			L_product_Vector.addElement(l_pro);
+			
+			save();
+			
 			int n = L_product_Vector.lastIndexOf(l_pro);
 			L_product_Vector.get(n).Info_print();
 		}else if(select == 3){
@@ -87,21 +121,25 @@ class Controller {
 			
 			Management_Food f_pro = new Management_Food(num, name, price, amount, maker, f_day, f_kind);
 			F_product_Vector.addElement(f_pro);
-			int n = L_product_Vector.lastIndexOf(f_pro);
-			F_product_Vector.get(n).Info_print();
 			
+			save();
+			
+			int n = F_product_Vector.lastIndexOf(f_pro);
+			F_product_Vector.get(n).Info_print();
 		}else {
 			System.out.println("잘못된 입력값!!");
 			return;
 		}
-		
 	}
-	public void ProductDelete() { //제품삭제 메서드
+	public void ProductDelete() throws EOFException, FileNotFoundException, IOException, ClassNotFoundException { //제품삭제 메서드
 		//어느걸 삭제할지 메뉴 선택(스위치문 or if문) -> 제품번호입력 -> 삭제
 		int select; //메뉴선택 번호
 		String d_num; //삭제할 제품번호
 		Scanner sc = new Scanner(System.in);
 		select = print_menu();
+		if(select == 4) {
+			return;
+		}
 		System.out.print("삭제할 제품번호 : ");
 		d_num = sc.nextLine();
 		
@@ -117,6 +155,7 @@ class Controller {
 				if(e_pro.Product_Num.equals(d_num)) {
 					System.out.println("제품번호 "+d_num+"를(을) 삭제합니다!!");
 					it.remove();
+					save();
 					return;
 				}
 			}
@@ -134,6 +173,7 @@ class Controller {
 				if(l_pro.Product_Num.equals(d_num)) {
 					System.out.println("제품번호 "+d_num+"를(을) 삭제합니다!!");
 					it.remove();
+					save();
 					return;
 				}
 			}
@@ -151,6 +191,7 @@ class Controller {
 				if(f_pro.Product_Num.equals(d_num)) {
 					System.out.println("제품번호 "+d_num+"를(을) 삭제합니다!!");
 					it.remove();
+					save();
 					return;
 				}
 			}
@@ -163,13 +204,16 @@ class Controller {
 			return;
 		}
 	}
-	public void ProductRevise() { //제품수정 메서드
+	public void ProductRevise() throws EOFException, FileNotFoundException, IOException, ClassNotFoundException { //제품수정 메서드
 		//어느걸 수정할지 메뉴 선택(스위치문 or if문) -> 제품번호입력 -> 다시입력(수정) ->수정완료\
 		//벡터와 Iterator를 활용
 		int select;
 		String r_num;
 		Scanner sc = new Scanner(System.in);
 		select=print_menu();
+		if(select == 4) {
+			return;
+		}
 		System.out.print("수정할 제품번호 : ");
 		r_num = sc.nextLine();
 		if(select==1) {
@@ -196,6 +240,7 @@ class Controller {
 					e_pro.Guarantee = sc.nextInt();
 					System.out.print("에너지등급 : ");
 					e_pro.Grade = sc.nextInt();
+					save();
 					return;
 				}
 			}
@@ -222,6 +267,7 @@ class Controller {
 					l_pro.Maker = sc.nextLine();
 					System.out.print("용도 : ");
 					l_pro.Usage = sc.nextLine();
+					save();
 					return;
 				}
 			}
@@ -250,6 +296,7 @@ class Controller {
 					f_pro.F_Day = sc.nextLine();
 					System.out.print("종류 : ");
 					f_pro.F_Kind = sc.nextLine();
+					save();
 					return;
 				}
 			}
@@ -269,6 +316,9 @@ class Controller {
 		String s_num;
 		Scanner sc = new Scanner(System.in);
 		select=print_menu();
+		if(select == 4) {
+			return null;
+		}
 		System.out.print("검색할 제품명 : ");
 		s_num = sc.nextLine();
 		System.out.println("===========출력결과==========");

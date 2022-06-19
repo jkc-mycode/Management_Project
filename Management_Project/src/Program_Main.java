@@ -1,7 +1,8 @@
 import java.util.*;
+import java.io.*;
 
-public class Program_Main {
-	public static void main(String[] args) {
+public class Program_Main implements Serializable {
+	public static void main(String[] args) throws IOException, ClassNotFoundException, FileNotFoundException, EOFException {
 		int select;
 		Scanner sc = new Scanner(System.in);
 		

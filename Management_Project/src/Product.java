@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.*;
 
-class Product {
+class Product  implements Serializable {
 	protected String Product_Num; //力前锅龋
 	protected String Product_Name; //力前疙
 	protected int Product_Price; //力前啊拜
