@@ -1,23 +1,25 @@
 import java.util.*;
+import java.io.*;
 
-interface Shopping{
+interface Shopping {
 	abstract public void Buy(); //물품 구매 메서드
 	abstract public void Cart(); //물품 장바구니 메서드
 	abstract public void Search(); //물품 검색 메서드
 }
 
-public class Mart {
+public class Mart implements Serializable {
 	protected Controller con = new Controller(); //컨트롤러에 있는 메서드 활용을 위해 사용
 	protected Vector<Product> cart_info_Vector = new Vector<Product>(); //장바구니 벡터 생성
 	protected int cart_index = 0;
 	
-	public void Buy(Product p) { //물품 구매 메서드
+	public void Buy(Product p) throws EOFException, FileNotFoundException, IOException, ClassNotFoundException { //물품 구매 메서드
 		if(p.Product_Amount == 0) {
 			System.out.println("재고가 없음!!");
 			return;
 		}else {
 			p.Product_Amount--;
 			System.out.println(p.Product_Price + "원이 지불되었습니다.");
+			con.save();
 		}
 	}
 	public void Cart(Product p) { //장바구니에 담는 메서드
@@ -38,7 +40,7 @@ public class Mart {
 		}
 	}
 
-	public void Search() { //고객용 물품 검색 메서드(이름으로)
+	public void Search() throws EOFException, FileNotFoundException, IOException, ClassNotFoundException { //고객용 물품 검색 메서드(이름으로)
 		Vector<Product> p_search_result = con.ProductSearch(); //제품을 검색해서 제품 정보 가져오기
 		Scanner sc = new Scanner(System.in);
 		String select1; //중복된 물품이 있을 경우 제품번호로 선택하기 위한 변수
@@ -71,7 +73,7 @@ public class Mart {
 			return;
 		}
 	}
-	public void Mart_main() { //마트 클래스에서 가장 먼저 실행
+	public void Mart_main() throws EOFException, FileNotFoundException, IOException, ClassNotFoundException { //마트 클래스에서 가장 먼저 실행
 		int select;
 		Scanner sc = new Scanner(System.in);
 		
